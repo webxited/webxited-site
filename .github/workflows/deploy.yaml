@@ -1,4 +1,4 @@
-name: Django-Starter workflow
+name: Django-Starter Deploy
  
 on:
   push:
