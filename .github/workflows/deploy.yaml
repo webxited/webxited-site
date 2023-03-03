@@ -1,26 +1,43 @@
-name: Deploy to Linux Server
+name: Django-Starter workflow
  
 on:
   push:
     branches:
-      - main
+      - master
  
 jobs:
-  deploy:
+  magic_deploy:
+    name: Deploy to server with remote docker-compose
     runs-on: ubuntu-latest
-
     steps:
-      - name: Connect to server and deploy Django project
-        uses: ssh-actions/ssh-command@v1
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh-host: ${{ secrets.SSH_HOST }}
-          ssh-username: ${{ secrets.SSH_USERNAME }}
-          run: |
-            cd /path/to/project
-            git pull origin main
-            pip install -r requirements.txt
-            python manage.py migrate
-            sudo systemctl restart gunicorn.service
-      - name: List all files
-        run: ls
+          python-version: 3.9
+      - name: Install SSH key to github server
+        uses: kielabokkie/ssh-key-and-known-hosts-action@v1.1.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+          ssh-host: ${{ secrets.IP_HOST }}
+ 
+      - name: test hai
+        run: ssh ${{ secrets.SSH_USER }}@${{secrets.IP_HOST}} echo hai
+      # - name: Install latest version of docker with experimental compose support
+      #   run: |
+      #     pip install docker-compose
+      # - name: Generate env file from Base64 encoded string (base64 -i .env)
+      #   uses: RollyPeres/base64-to-path@v1
+      #   with:
+      #     filePath: ${{ github.workspace }}/.env
+      #     encodedString: ${{ secrets.ENV }}
+ 
+      # - name: Remote docker compose down/up using context (zero files)
+      #   run: |
+      #     docker context create remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.IP_HOST }}"
+      #     docker context use remote
+      #     # ERROR AFTER THIS
+      #     docker image prune -f
+      #     docker build -t infyplus/lms-backend:latest .
+      #     docker-compose --context remote -f docker-compose-prod.yaml down
+      #     docker-compose --context remote -f docker-compose-prod.yaml --env-file ./.env up -d --force-recreate --build 
