@@ -1,0 +1,25 @@
+name: Deploy-Django-New
+ 
+on:
+  push:
+    branches:
+      - main
+ 
+jobs:
+  magic_deploy:
+    name: Deploy to server with remote docker-compose
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Install SSH key to github server
+        uses: kielabokkie/ssh-key-and-known-hosts-action@v1.1.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+          ssh-host: ${{ secrets.IP_HOST }}
+ 
+      - name: test hai
+        run: ssh ${{ secrets.SSH_USER }}@${{secrets.IP_HOST}} echo hai
