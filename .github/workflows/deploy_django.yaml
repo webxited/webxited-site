@@ -1,4 +1,4 @@
-name: Django-Starter Deploy
+name: Deploy-Django 
  
 on:
   push:
